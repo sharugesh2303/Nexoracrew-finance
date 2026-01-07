@@ -14,7 +14,7 @@ interface LoginProps {
   onLogin: (user: User) => void;
 }
 
-const API_BASE = "http://localhost:5000/api/v1";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
