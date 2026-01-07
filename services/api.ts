@@ -1,6 +1,6 @@
 import axios from "axios";
 
-/**
+/*
  * Change this if backend is hosted
  * Local: http://localhost:5000
  * Hosted: https://your-backend-url
@@ -14,6 +14,8 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+console.log("🚀 API Base URL:", API_BASE_URL);
 
 /* Optional: interceptor for debugging */
 api.interceptors.response.use(
