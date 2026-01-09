@@ -71,7 +71,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
         <div className="p-4">
           <div className="flex items-center space-x-3 mb-6 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
             <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-lg font-bold text-white">
-              {user.name.charAt(0).toUpperCase()}
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="overflow-hidden">
               <p className="font-medium text-sm truncate text-slate-700 dark:text-slate-200">{user.name}</p>

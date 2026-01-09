@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { api } from '../services/api';
 import { Download, FileBarChart, Filter, Loader2 } from 'lucide-react';
 import { User, Transaction, PaymentMethod } from '../types';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
-// ✅ API CONFIG
-const API_BASE = import.meta.env.VITE_API_BASE;
+// ✅ API CONFIG removed for centralized api service
 
 
 interface ReportsProps {
@@ -37,7 +36,7 @@ export const Reports: React.FC<ReportsProps> = ({ user }) => {
   const fetchTransactions = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/transactions`, {
+      const response = await api.get('/transactions', {
         params: { userId: user.id }
       });
       setAllTransactions(response.data);

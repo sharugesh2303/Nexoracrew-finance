@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { api } from "../services/api";
 import { User } from "../types";
 import {
   Mail,
@@ -13,8 +13,6 @@ import {
 interface LoginProps {
   onLogin: (user: User) => void;
 }
-
-const API_BASE = import.meta.env.VITE_API_BASE;
 
 export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -35,7 +33,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
       if (isLogin) {
         // LOGIN
-        const res = await axios.post(`${API_BASE}/auth/login`, {
+        const res = await api.post("/auth/login", {
           email,
           password
         });
@@ -54,7 +52,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           return;
         }
 
-        const res = await axios.post(`${API_BASE}/auth/register`, {
+        const res = await api.post("/auth/register", {
           name,
           email,
           password,
@@ -151,6 +149,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-white"
+                placeholder="sharugesh28@gmail.com"
               />
             </div>
           </div>
@@ -166,6 +165,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-white"
+                placeholder="••••••••"
               />
             </div>
           </div>

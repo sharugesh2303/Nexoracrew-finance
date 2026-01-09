@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../services/api";
 import { User } from "../types";
 import { Loader2, Trash2, Edit, UserPlus, Mail, Briefcase, Calendar } from "lucide-react";
 
-// ✅ API CONFIG
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+// ✅ API CONFIG removed in favor of centralized api service
 
 const emptyForm: Partial<User> = {
   name: "",
@@ -28,12 +27,12 @@ export const UsersList: React.FC = () => {
   const loadUsers = async () => {
     setLoading(true);
     try {
-        const response = await axios.get(`${API_BASE_URL}/users`);
-        setUsers(response.data);
+      const response = await api.get('/users');
+      setUsers(response.data);
     } catch (error) {
-        console.error("Failed to load users", error);
+      console.error("Failed to load users", error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -61,35 +60,35 @@ export const UsersList: React.FC = () => {
 
     setIsSaving(true);
     try {
-        if (editingUser) {
-            // Update existing user
-            // Handle both _id (MongoDB) and id (Frontend type)
-            const id = editingUser._id || editingUser.id;
-            await axios.put(`${API_BASE_URL}/users/${id}`, form);
-        } else {
-            // Create new user
-            await axios.post(`${API_BASE_URL}/users`, form);
-        }
-        
-        setShowForm(false);
-        loadUsers(); // Refresh list
+      if (editingUser) {
+        // Update existing user
+        // Handle both _id (MongoDB) and id (Frontend type)
+        const id = editingUser._id || editingUser.id;
+        await api.put(`/users/${id}`, form);
+      } else {
+        // Create new user
+        await api.post('/users', form);
+      }
+
+      setShowForm(false);
+      loadUsers(); // Refresh list
     } catch (error) {
-        console.error("Save failed", error);
-        alert("Failed to save user. Email might be duplicate.");
+      console.error("Save failed", error);
+      alert("Failed to save user. Email might be duplicate.");
     } finally {
-        setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this user?")) return;
-    
+
     try {
-        await axios.delete(`${API_BASE_URL}/users/${id}`);
-        loadUsers();
+      await api.delete(`/users/${id}`);
+      loadUsers();
     } catch (error) {
-        console.error("Delete failed", error);
-        alert("Failed to delete user.");
+      console.error("Delete failed", error);
+      alert("Failed to delete user.");
     }
   };
 
@@ -98,10 +97,10 @@ export const UsersList: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-white">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white">
             Team Management
-            </h2>
-            <p className="text-slate-500 text-sm">Manage access and roles for your crew</p>
+          </h2>
+          <p className="text-slate-500 text-sm">Manage access and roles for your crew</p>
         </div>
         <button
           onClick={openAdd}
@@ -144,28 +143,28 @@ export const UsersList: React.FC = () => {
               users.map((u) => (
                 <tr key={u._id || u.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                   <td className="p-4 pl-6 font-medium text-slate-800 dark:text-white">
-                      <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 font-bold">
-                              {u.name.charAt(0).toUpperCase()}
-                          </div>
-                          {u.name}
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 font-bold">
+                        {u.name.charAt(0).toUpperCase()}
                       </div>
+                      {u.name}
+                    </div>
                   </td>
                   <td className="p-4 text-slate-500 dark:text-slate-400">
-                      <div className="flex items-center gap-2">
-                          <Mail size={14} className="opacity-50"/> {u.email}
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Mail size={14} className="opacity-50" /> {u.email}
+                    </div>
                   </td>
                   <td className="p-4">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
-                      <Briefcase size={12}/>
+                      <Briefcase size={12} />
                       {u.position}
                     </span>
                   </td>
                   <td className="p-4 text-slate-400 text-sm">
                     <div className="flex items-center gap-2">
-                        <Calendar size={14} className="opacity-50"/>
-                        {new Date(u.createdAt || Date.now()).toLocaleDateString()}
+                      <Calendar size={14} className="opacity-50" />
+                      {new Date(u.createdAt || Date.now()).toLocaleDateString()}
                     </div>
                   </td>
                   <td className="p-4 text-right space-x-2 pr-6">
@@ -174,14 +173,14 @@ export const UsersList: React.FC = () => {
                       className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                       title="Edit"
                     >
-                      <Edit size={16}/>
+                      <Edit size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(u._id || u.id)}
                       className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                       title="Delete"
                     >
-                      <Trash2 size={16}/>
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
@@ -200,35 +199,35 @@ export const UsersList: React.FC = () => {
             </h3>
 
             <div className="space-y-4">
-                <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Full Name</label>
-                    <input
-                        className="w-full p-3 border border-slate-200 dark:border-slate-600 dark:bg-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g. John Doe"
-                        value={form.name || ""}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    />
-                </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Full Name</label>
+                <input
+                  className="w-full p-3 border border-slate-200 dark:border-slate-600 dark:bg-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g. John Doe"
+                  value={form.name || ""}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </div>
 
-                <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Email Address</label>
-                    <input
-                        className="w-full p-3 border border-slate-200 dark:border-slate-600 dark:bg-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="john@nexora.crew"
-                        value={form.email || ""}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
-                </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Email Address</label>
+                <input
+                  className="w-full p-3 border border-slate-200 dark:border-slate-600 dark:bg-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="john@nexora.crew"
+                  value={form.email || ""}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
 
-                <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Job Position</label>
-                    <input
-                        className="w-full p-3 border border-slate-200 dark:border-slate-600 dark:bg-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g. Developer"
-                        value={form.position || ""}
-                        onChange={(e) => setForm({ ...form, position: e.target.value })}
-                    />
-                </div>
+              <div>
+                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Job Position</label>
+                <input
+                  className="w-full p-3 border border-slate-200 dark:border-slate-600 dark:bg-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g. Developer"
+                  value={form.position || ""}
+                  onChange={(e) => setForm({ ...form, position: e.target.value })}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
@@ -243,7 +242,7 @@ export const UsersList: React.FC = () => {
                 disabled={isSaving}
                 className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-500/30 flex items-center gap-2"
               >
-                {isSaving && <Loader2 className="animate-spin" size={16}/>}
+                {isSaving && <Loader2 className="animate-spin" size={16} />}
                 Save User
               </button>
             </div>

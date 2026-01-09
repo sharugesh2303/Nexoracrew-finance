@@ -57,7 +57,7 @@ export const logoutUser = async () => {
   localStorage.removeItem("nexora_session");
 };
 
-export const getCurrentUser = async (): Promise<User | null> => {
+export const getCurrentUser = (): User | null => {
   const data = localStorage.getItem("nexora_session");
   return data ? JSON.parse(data) : null;
 };
